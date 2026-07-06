@@ -1,0 +1,109 @@
+import { HeadBucketCommand, S3Client } from '@aws-sdk/client-s3';
+
+import Mux from '@mux/mux-node';
+
+import type { PlatformCredentials } from '@/utils/store';
+
+import validateApiVideoCredentials from './api-video';
+
+export const dynamic = 'force-dynamic';
+
+export async function POST(request: Request) {
+  const data: PlatformCredentials = await request.json();
+
+  switch (data.additionalMetadata?.platformId) {
+    case 'api-video': {
+      const result = await validateApiVideoCredentials(data);
+      return result;
+    }
+    case 'wistia': {
+      const response = await fetch(`https://api.wistia.com/modern/account`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${data.secretKey}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      const result = await response.json();
+      if (result.id) {
+        return new Response('ok', { status: 200 });
+      } else {
+        return Response.json({ error: 'Invalid credentials' }, { status: 401 });
+      }
+    }
+    case 'vimeo': {
+      const response = await fetch(`https://api.vimeo.com`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${data.secretKey}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      const result = await response.json();
+      if (result.endpoints) {
+        return new Response('ok', { status: 200 });
+      } else {
+        return Response.json({ error: 'Invalid credentials' }, { status: 401 });
+      }
+    }
+    case 'cloudflare-stream':
+      try {
+        const response = await fetch('https://api.cloudflare.com/client/v4/user/tokens/verify', {
+          headers: {
+            Authorization: `Bearer ${data.secretKey}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          return new Response('ok', { status: 200 });
+        } else {
+          return Response.json({ error: 'Invalid credentials' }, { status: 401 });
+        }
+      } catch (error) {
+        console.error('Error:', error); // Catching and logging any errors
+        return Response.json({ error: 'Invalid credentials' }, { status: 401 });
+      }
+    case 's3':
+      const s3Credentials: any = {
+        accessKeyId: data.publicKey,
+        secretAccessKey: data.secretKey!,
+      };
+      if (data.additionalMetadata?.sessionToken) {
+        s3Credentials.sessionToken = data.additionalMetadata.sessionToken;
+      }
+      const client = new S3Client({
+        credentials: s3Credentials,
+        region: data.additionalMetadata.region,
+      });
+
+      const input = {
+        Bucket: data.additionalMetadata.bucket,
+      };
+
+      const command = new HeadBucketCommand(input);
+
+      try {
+        await client.send(command);
+        return new Response('ok', { status: 200 });
+      } catch (error) {
+        console.error(error);
+        return Response.json({ error: 'Invalid credentials' }, { status: 401 });
+      }
+    case 'mux':
+      const mux = new Mux({
+        tokenId: data.publicKey as string,
+        tokenSecret: data.secretKey as string,
+      });
+
+      try {
+        await mux.video.assets.list();
+        return new Response('ok', { status: 200 });
+      } catch (error) {
+        return Response.json({ error: 'Invalid credentials' }, { status: 401 });
+      }
+    default:
+      return Response.json({ error: 'Invalid platform provided' }, { status: 404 });
+  }
+}
