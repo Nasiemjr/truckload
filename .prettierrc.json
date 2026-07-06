@@ -9,17 +9,7 @@
   "trailingComma": "es5",
   "bracketSpacing": true,
   "arrowParens": "always",
-  "importOrder": [
-    "^react(.*)$",
-    "^next(.*)$",
-    "<THIRD_PARTY_MODULES>",
-    "^@mux/(.*)$",
-    "^~/(.*)$",
-    "^@/(.*)$",
-    "^app/_(.*)$",
-    "^app/(.*)$",
-    "^[./]"
-  ],
+  "importOrder": ["^react(.*)$", "<THIRD_PARTY_MODULES>", "^@mux/(.*)$", "^~/(.*)$", "^@/(.*)$", "^[./]"],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
   "plugins": ["@trivago/prettier-plugin-sort-imports"]

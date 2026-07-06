@@ -1,20 +1,22 @@
-'use client';
-
 import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 
-import Image from 'next/image';
+import { createFileRoute } from '@tanstack/react-router';
 
-import PlatformCredentialsForm from './components/platforms/credentials-form';
-import PlatformList from './components/platforms/platform-list';
-import VideoFilter from './components/platforms/video-filter';
-import ImportSettings from './components/shared/import-settings';
-import MigrationStatus from './components/shared/migration-status';
-import Review from './components/shared/review';
-import Sidebar from './components/sidebar';
-import useMigrationStore from './utils/store';
+import PlatformCredentialsForm from '@/components/platforms/credentials-form';
+import PlatformList from '@/components/platforms/platform-list';
+import VideoFilter from '@/components/platforms/video-filter';
+import ImportSettings from '@/components/shared/import-settings';
+import MigrationStatus from '@/components/shared/migration-status';
+import Review from '@/components/shared/review';
+import Sidebar from '@/components/sidebar';
+import useMigrationStore from '@/utils/store';
 
-export default function Page() {
+export const Route = createFileRoute('/')({
+  component: Page,
+});
+
+function Page() {
   const sourcePlatform = useMigrationStore((state) => state.sourcePlatform);
   const destinationPlatform = useMigrationStore((state) => state.destinationPlatform);
   const job = useMigrationStore((state) => state.job);
@@ -46,7 +48,7 @@ export default function Page() {
       <div className="flex flex-col min-h-screen p-4">
         <div className="border-b-8 border-double mb-8 border-primary flex items-end gap-4">
           <h1>
-            <Image src="/truck.png" alt="Truckload Video" width={130} height={60} />
+            <img src="/truck.png" alt="Truckload Video" width={130} height={60} />
             <span className="sr-only">Truckload Video Migration</span>
           </h1>
         </div>

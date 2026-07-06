@@ -8,9 +8,12 @@
 # testing
 /coverage
 
-# next.js
-/.next/
-/out/
+# vite
+/dist/
+/.output/
+/.nitro/
+/.swc/
+routeTree.gen.ts
 
 # production
 /build
@@ -32,11 +35,9 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
 
 # partykit
-app/.partykit
-app/node_modules
+.partykit
 
 # workflow
 .workflow-data

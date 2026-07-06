@@ -1,16 +1,11 @@
+import { defineEventHandler } from 'nitro/h3';
 import { start } from 'workflow/api';
 
 import { createJob } from '@/utils/job';
 import { initiateMigration } from '@/workflows/migration';
 
-export const dynamic = 'force-dynamic';
-
-export async function GET(request: Request) {
-  return new Response('Hello, World!', { status: 200 });
-}
-
-export async function POST(request: Request) {
-  const body = await request.json();
+export default defineEventHandler(async ({ req }) => {
+  const body = await req.json();
 
   const run = await start(initiateMigration, [body]);
   const jobId = run.runId;
@@ -18,4 +13,4 @@ export async function POST(request: Request) {
   await createJob(jobId);
 
   return new Response(JSON.stringify({ id: jobId }), { status: 201 });
-}
+});

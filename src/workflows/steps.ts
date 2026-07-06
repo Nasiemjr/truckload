@@ -331,7 +331,7 @@ export async function transferVideoStep(
 
   const result = await mux.video.assets.create(payload);
 
-  await fetch(`${process.env.NEXT_PUBLIC_PARTYKIT_URL}/party/${jobId}`, {
+  await fetch(`${process.env.VITE_PARTYKIT_URL}/party/${jobId}`, {
     method: 'PUT',
     body: JSON.stringify({
       id: jobId,
@@ -346,7 +346,7 @@ export async function transferVideoStep(
 
 export async function updateJobStatusStep(jobId: string, eventType: string, data: any): Promise<void> {
   'use step';
-  await fetch(`${process.env.NEXT_PUBLIC_PARTYKIT_URL}/party/${jobId}`, {
+  await fetch(`${process.env.VITE_PARTYKIT_URL}/party/${jobId}`, {
     method: 'PUT',
     body: JSON.stringify({ id: jobId, type: eventType, data }),
     headers: { 'Content-Type': 'application/json' },

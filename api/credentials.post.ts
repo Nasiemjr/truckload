@@ -1,15 +1,13 @@
 import { HeadBucketCommand, S3Client } from '@aws-sdk/client-s3';
+import { defineEventHandler } from 'nitro/h3';
 
 import Mux from '@mux/mux-node';
 
+import validateApiVideoCredentials from '@/server/credentials-api-video';
 import type { PlatformCredentials } from '@/utils/store';
 
-import validateApiVideoCredentials from './api-video';
-
-export const dynamic = 'force-dynamic';
-
-export async function POST(request: Request) {
-  const data: PlatformCredentials = await request.json();
+export default defineEventHandler(async ({ req }) => {
+  const data: PlatformCredentials = await req.json();
 
   switch (data.additionalMetadata?.platformId) {
     case 'api-video': {
@@ -106,4 +104,4 @@ export async function POST(request: Request) {
     default:
       return Response.json({ error: 'Invalid platform provided' }, { status: 404 });
   }
-}
+});

@@ -1,5 +1,3 @@
-import Image from 'next/image';
-
 import clsx from 'clsx';
 
 import LogoApiVideo from '@/components/platforms/api-video/logo.svg';
@@ -92,7 +90,7 @@ export default function PlatformList({ type }: { type: 'source' | 'destination' 
             }}
           >
             <div className="h-20 w-20 flex items-center justify-center relative">
-              <Image src={platform.logo} fill alt={`${platform.name} logo`} />
+              <img src={platform.logo} className="max-w-full max-h-full" alt={`${platform.name} logo`} />
             </div>
             <h3 className="font-semibold text-slate-700 text-sm">{platform.name}</h3>
             {/* <p className='text-sm'>{platform.description}</p> */}

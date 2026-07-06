@@ -1,0 +1,11 @@
+@import '@fontsource-variable/dm-sans';
+@import '@fontsource-variable/jetbrains-mono';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --sans: 'DM Sans Variable';
+  --mono: 'JetBrains Mono Variable';
+}

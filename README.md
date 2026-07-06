@@ -26,7 +26,7 @@ Finally, start the app:
 npm run start:dev
 ```
 
-This will start server instances for the Next.js app and PartyKit.
+This will start server instances for the Vite (TanStack Router + Nitro) app and PartyKit.
 
 <img src="public/stack.png" alt="Truckload stack" width="600px">
 

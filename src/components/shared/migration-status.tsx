@@ -1,5 +1,3 @@
-'use client';
-
 import clsx from 'clsx';
 import usePartySocket from 'partysocket/react';
 
@@ -14,7 +12,7 @@ export default function MigrationStatus() {
   const setVideoMigrationProgress = useMigrationStore((state) => state.setVideoMigrationProgress);
 
   const socket = usePartySocket({
-    host: process.env.NEXT_PUBLIC_PARTYKIT_URL,
+    host: import.meta.env.VITE_PARTYKIT_URL,
     room: job!.id,
     onMessage(event) {
       const payload = JSON.parse(event.data);
