@@ -11,7 +11,7 @@ First, clone the repository and install dependencies:
 ```bash
 git clone https://github.com/muxinc/truckload.git
 cd truckload
-npm install
+bun install
 ```
 
 Next, create a `.env.local` file in the root directory with your API keys and other configuration settings:
@@ -23,7 +23,7 @@ cp .env.example .env.local
 Finally, start the app:
 
 ```bash
-npm run start:dev
+bun run start:dev
 ```
 
 This will start server instances for the Vite (TanStack Router + Nitro) app and PartyKit.
