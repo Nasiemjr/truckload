@@ -6,6 +6,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import PlatformCredentialsForm from '@/components/platforms/credentials-form';
 import PlatformList from '@/components/platforms/platform-list';
 import VideoFilter from '@/components/platforms/video-filter';
+import VideoSelection from '@/components/platforms/video-selection';
 import ImportSettings from '@/components/shared/import-settings';
 import MigrationStatus from '@/components/shared/migration-status';
 import Review from '@/components/shared/review';
@@ -60,6 +61,7 @@ function Page() {
             {currentStep === 'select-source' && <PlatformList type="source" />}
             {currentStep === 'set-source-credentials' && sourcePlatform && <PlatformCredentialsForm />}
             {currentStep === 'set-video-filter' && <VideoFilter />}
+            {currentStep === 'select-videos' && <VideoSelection />}
             {currentStep === 'select-destination' && <PlatformList type="destination" />}
             {currentStep === 'set-destination-credentials' && destinationPlatform && <PlatformCredentialsForm />}
             {currentStep === 'set-import-settings' && <ImportSettings />}

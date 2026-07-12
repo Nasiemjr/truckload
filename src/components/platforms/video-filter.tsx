@@ -23,12 +23,12 @@ export default function VideoFilter() {
           Move everything. All of it.
         </button>
         <button
-          disabled
-          className="p-4 border-2 rounded border-gray-300 text-gray-300 disabled:cursor-not-allowed text-base h-28 w-56"
+          className="p-4 border-2 rounded text-slate-600 border-slate-200 hover:border-slate-300 focus:border-slate-300 text-base h-28 w-56"
+          onClick={() => {
+            setCurrentStep('select-videos');
+          }}
         >
           Let me choose which videos
-          <br />
-          <span className="text-xs italic">Coming soon</span>
         </button>
       </div>
     </div>

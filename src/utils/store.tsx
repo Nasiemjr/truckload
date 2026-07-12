@@ -66,7 +66,8 @@ interface Platform {
 }
 
 export type AssetFilter = {
-  url: string;
+  id: string;
+  title?: string | undefined;
 };
 
 export type MigrationJob = {

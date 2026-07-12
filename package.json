@@ -12,7 +12,7 @@
     "lint": "prettier --check ./ && eslint .",
     "format": "prettier --write ./ && eslint . --fix",
     "prepare": "husky install",
-    "partykit": "bunx partykit dev",
+    "partykit": "partykit dev",
     "workflow:web": "bunx workflow web",
     "workflow:inspect": "bunx workflow inspect runs",
     "test": "vitest run",

@@ -11,7 +11,7 @@ export default function MigrationStatus() {
   const job = useMigrationStore((state) => state.job);
   const setVideoMigrationProgress = useMigrationStore((state) => state.setVideoMigrationProgress);
 
-  const socket = usePartySocket({
+  usePartySocket({
     host: import.meta.env.VITE_PARTYKIT_URL,
     room: job!.id,
     onMessage(event) {
@@ -22,15 +22,22 @@ export default function MigrationStatus() {
       console.log(payload);
 
       switch (payload.type) {
-        case 'migration.videos.fetched':
-          const { hasMorePages, pageNumber, videos } = payload.data;
-          useMigrationStore.setState({ job: { ...job, ...payload.data } });
+        case 'job.state':
+          useMigrationStore.setState((state) => ({
+            job: { ...state.job, ...payload.data, videos: { ...payload.data.videos, ...state.job?.videos } },
+          }));
           break;
-        case 'migration.video.progress':
+        case 'migration.videos.fetched':
+          useMigrationStore.setState((state) => ({
+            job: state.job ? { ...state.job, videos: { ...state.job.videos, ...payload.data.videos } } : state.job,
+          }));
+          break;
+        case 'migration.video.progress': {
           const { video } = payload.data;
 
           setVideoMigrationProgress(video.id, video);
           break;
+        }
         default:
           break;
       }

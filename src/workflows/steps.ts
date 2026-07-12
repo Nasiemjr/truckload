@@ -195,7 +195,7 @@ async function fetchVideoS3(credentials: PlatformCredentials, video: Video) {
 
 // --- Provider dispatch maps ---
 
-const fetchPageFns: Record<
+export const fetchPageFns: Record<
   string,
   (credentials: PlatformCredentials, page: number, cursor?: string) => Promise<FetchPageResult>
 > = {
@@ -306,7 +306,7 @@ export async function transferVideoStep(
   });
 
   const config = destinationPlatform.config;
-  let input: Mux.Video.Assets.AssetCreateParams.Input[] = [{ url: video.url }];
+  const input: Mux.Video.Assets.AssetCreateParams.Input[] = [{ url: video.url }];
   if (config?.autoGenerateCaptions) {
     input[0].generated_subtitles = [{ name: 'English', language_code: 'en' }];
   }

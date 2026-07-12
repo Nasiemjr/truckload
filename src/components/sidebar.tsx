@@ -92,7 +92,11 @@ export default function Sidebar() {
           <div className="flex justify-between border-b border-slate-200 pb-2">
             <div className="flex flex-col">
               <h3 className="font-semibold text-sm">Video selection</h3>
-              <p className="text-sm">Moving all videos</p>
+              <p className="text-sm">
+                {assetFilter.length > 0
+                  ? `Moving ${assetFilter.length} video${assetFilter.length === 1 ? '' : 's'}`
+                  : 'Moving all videos'}
+              </p>
             </div>
 
             <button

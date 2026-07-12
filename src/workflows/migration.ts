@@ -1,6 +1,6 @@
 import { FatalError, getWorkflowMetadata, sleep } from 'workflow';
 
-import type { DestinationPlatform, SourcePlatform, Video, VideoWithMigrationStatus } from '@/utils/store';
+import type { AssetFilter, DestinationPlatform, SourcePlatform, Video, VideoWithMigrationStatus } from '@/utils/store';
 
 import {
   checkCloudflareStatusStep,
@@ -23,6 +23,10 @@ export async function processVideo(
   let video = await fetchVideoStep(sourcePlatform.id, sourcePlatform.credentials!, videoData);
 
   if (!video) {
+    // report the failure so the status UI doesn't show this video as pending forever
+    await updateJobStatusStep(jobId, 'migration.video.progress', {
+      video: { id: videoData.id, status: 'failed', progress: 0 },
+    });
     throw new FatalError(`Failed to fetch video with ID: ${videoData.id}`);
   }
 
@@ -60,11 +64,14 @@ export async function processVideo(
 export async function initiateMigration(data: {
   sourcePlatform: SourcePlatform;
   destinationPlatform: DestinationPlatform;
-  assetFilter: any;
+  assetFilter: AssetFilter[] | null;
 }) {
   'use workflow';
 
   const { workflowRunId: jobId } = getWorkflowMetadata();
+
+  // an empty filter means "move everything"; a non-empty one limits the migration to those videos
+  const selectedIds = data.assetFilter?.length ? new Set(data.assetFilter.map((filter) => filter.id)) : null;
 
   let hasMorePages = true;
   let page = 1;
@@ -76,7 +83,7 @@ export async function initiateMigration(data: {
     const { isTruncated, videos } = result;
     cursor = result.cursor ?? undefined;
 
-    videoList = videoList.concat(videos);
+    videoList = videoList.concat(selectedIds ? videos.filter((video) => selectedIds.has(video.id)) : videos);
 
     await updateJobStatusStep(jobId, 'migration.videos.fetched', {
       pageNumber: page,
@@ -87,7 +94,7 @@ export async function initiateMigration(data: {
       hasMorePages: isTruncated,
     });
 
-    if (!isTruncated) {
+    if (!isTruncated || (selectedIds && videoList.length >= selectedIds.size)) {
       hasMorePages = false;
     } else {
       page++;
