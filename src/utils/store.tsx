@@ -44,7 +44,7 @@ export type PlatformCredentials = {
 };
 
 export interface SourcePlatform extends Platform {
-  id: 's3' | 'cloudflare-stream' | 'api-video' | 'vimeo' | 'wistia';
+  id: 's3' | 'cloudflare-stream' | 'api-video' | 'vimeo' | 'wistia' | 'bunny';
   type: 'source';
 }
 

@@ -44,6 +44,26 @@ export default defineEventHandler(async ({ req }) => {
         return Response.json({ error: 'Invalid credentials' }, { status: 401 });
       }
     }
+    case 'bunny': {
+      try {
+        const response = await fetch(
+          `https://video.bunnycdn.com/library/${data.publicKey}/videos?page=1&itemsPerPage=1`,
+          {
+            headers: {
+              AccessKey: data.secretKey as string,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        if (response.ok) {
+          return new Response('ok', { status: 200 });
+        }
+        return Response.json({ error: 'Invalid credentials' }, { status: 401 });
+      } catch (error) {
+        console.error('Error:', error);
+        return Response.json({ error: 'Invalid credentials' }, { status: 401 });
+      }
+    }
     case 'cloudflare-stream':
       try {
         const response = await fetch('https://api.cloudflare.com/client/v4/user/tokens/verify', {
@@ -63,7 +83,7 @@ export default defineEventHandler(async ({ req }) => {
         console.error('Error:', error); // Catching and logging any errors
         return Response.json({ error: 'Invalid credentials' }, { status: 401 });
       }
-    case 's3':
+    case 's3': {
       const s3Credentials: any = {
         accessKeyId: data.publicKey,
         secretAccessKey: data.secretKey!,
@@ -89,7 +109,8 @@ export default defineEventHandler(async ({ req }) => {
         console.error(error);
         return Response.json({ error: 'Invalid credentials' }, { status: 401 });
       }
-    case 'mux':
+    }
+    case 'mux': {
       const mux = new Mux({
         tokenId: data.publicKey as string,
         tokenSecret: data.secretKey as string,
@@ -101,6 +122,7 @@ export default defineEventHandler(async ({ req }) => {
       } catch (error) {
         return Response.json({ error: 'Invalid credentials' }, { status: 401 });
       }
+    }
     default:
       return Response.json({ error: 'Invalid platform provided' }, { status: 404 });
   }

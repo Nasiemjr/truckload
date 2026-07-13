@@ -93,6 +93,60 @@ export async function fetchPageWistia(credentials: PlatformCredentials, page: nu
   return { videos, isTruncated: result.length !== 0, cursor: null };
 }
 
+function getBunnyCdnHost(credentials: PlatformCredentials) {
+  // tolerate users pasting the hostname with a protocol or trailing slash
+  return (credentials.additionalMetadata?.cdnHostname ?? '').replace(/^https?:\/\//, '').replace(/\/+$/, '');
+}
+
+export async function fetchPageBunny(credentials: PlatformCredentials, page: number): Promise<FetchPageResult> {
+  const itemsPerPage = 100;
+  const response = await fetch(
+    `https://video.bunnycdn.com/library/${credentials.publicKey}/videos?page=${page}&itemsPerPage=${itemsPerPage}&orderBy=date`,
+    {
+      headers: {
+        AccessKey: credentials.secretKey as string,
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+  const result = await response.json();
+  const cdnHost = getBunnyCdnHost(credentials);
+  const videos =
+    result.items
+      // status 4 = finished transcoding; anything else has no playable files yet
+      ?.filter((obj: any) => obj.guid && obj.status === 4)
+      .map((obj: any) => ({
+        id: obj.guid,
+        title: obj.title,
+        thumbnailUrl:
+          cdnHost && obj.thumbnailFileName ? `https://${cdnHost}/${obj.guid}/${obj.thumbnailFileName}` : undefined,
+      })) || [];
+  const isTruncated = page * itemsPerPage < (result.totalItems ?? 0);
+  return { isTruncated, videos, cursor: null };
+}
+
+export async function fetchVideoBunny(credentials: PlatformCredentials, video: Video) {
+  const response = await fetch(`https://video.bunnycdn.com/library/${credentials.publicKey}/videos/${video.id}`, {
+    headers: {
+      AccessKey: credentials.secretKey as string,
+      'Content-Type': 'application/json',
+    },
+  });
+  const result = await response.json();
+  if (!result.hasMP4Fallback) {
+    throw new Error(
+      'Bunny Stream video has no MP4 files. Enable "MP4 Fallback" in the video library settings and re-encode the video.'
+    );
+  }
+  const resolutions: string[] = (result.availableResolutions || '').split(',').filter(Boolean);
+  const highest = resolutions.sort((a: string, b: string) => parseInt(b) - parseInt(a))[0];
+  if (!highest) {
+    throw new Error(`No available resolutions found for Bunny Stream video ${video.id}`);
+  }
+  const cdnHost = getBunnyCdnHost(credentials);
+  return { id: video.id, url: `https://${cdnHost}/${video.id}/play_${highest}.mp4`, title: result.title };
+}
+
 function getS3Credentials(credentials: PlatformCredentials) {
   const creds: any = {
     accessKeyId: credentials.publicKey,
@@ -204,6 +258,7 @@ export const fetchPageFns: Record<
   vimeo: fetchPageVimeo,
   wistia: fetchPageWistia,
   s3: fetchPageS3,
+  bunny: fetchPageBunny,
 };
 
 const fetchVideoFns: Record<string, (credentials: PlatformCredentials, video: Video) => Promise<any>> = {
@@ -212,6 +267,7 @@ const fetchVideoFns: Record<string, (credentials: PlatformCredentials, video: Vi
   vimeo: fetchVideoVimeo,
   wistia: fetchVideoWistia,
   s3: fetchVideoS3,
+  bunny: fetchVideoBunny,
 };
 
 // --- Step Functions ---

@@ -6,9 +6,9 @@
   "private": true,
   "packageManager": "bun@1.3.5",
   "scripts": {
-    "dev": "vite dev",
-    "build": "vite build",
-    "start": "bun .output/server/index.mjs",
+    "dev": "node init && vite dev",
+    "build": "node init && vite build",
+    "start": "node init && bun .output/server/index.mjs",
     "lint": "prettier --check ./ && eslint .",
     "format": "prettier --write ./ && eslint . --fix",
     "prepare": "husky install",
@@ -17,7 +17,7 @@
     "workflow:inspect": "bunx workflow inspect runs",
     "test": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts",
-    "start:dev": "concurrently -c \"white,red\" --names \"VITE,PARTYKIT\" \"bun run dev\" \"bun run partykit\""
+    "start:dev": "node init && concurrently -c \"white,red\" --names \"VITE,PARTYKIT\" \"bun run dev\" \"bun run partykit\""
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.515.0",

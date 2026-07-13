@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 
 import LogoApiVideo from '@/components/platforms/api-video/logo.svg';
+import LogoBunny from '@/components/platforms/bunny/logo.svg';
 import LogoCloudflare from '@/components/platforms/cloudflare/logo.svg';
 import LogoMux from '@/components/platforms/mux/logo.svg';
 import LogoS3 from '@/components/platforms/s3/logo.svg';
@@ -42,6 +43,11 @@ const PLATFORMS: Platforms = {
       id: 'cloudflare-stream',
       name: 'Cloudflare Stream',
       logo: LogoCloudflare,
+    },
+    {
+      id: 'bunny',
+      name: 'Bunny Stream',
+      logo: LogoBunny,
     },
   ],
   destination: [

@@ -89,6 +89,27 @@ const PLATFORM_CREDENTIALS = [
     ],
   },
   {
+    name: 'Bunny Stream',
+    id: 'bunny',
+    values: [
+      {
+        label: 'Video Library ID',
+        name: 'publicKey',
+        type: 'text',
+      },
+      {
+        label: 'Stream API Key (library AccessKey)',
+        name: 'secretKey',
+        type: 'text',
+      },
+      {
+        label: 'CDN hostname (e.g. vz-abc123-456.b-cdn.net)',
+        name: 'cdnHostname',
+        type: 'text',
+      },
+    ],
+  },
+  {
     name: 'Vimeo',
     id: 'vimeo',
     values: [

@@ -42,3 +42,4 @@ yarn-error.log*
 # workflow
 .workflow-data
 .workflow-vitest
+config.bat
